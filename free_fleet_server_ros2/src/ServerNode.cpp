@@ -365,10 +365,10 @@ void ServerNode::update_state_callback()
 
 void ServerNode::publish_robot_state()
 {
-  rmf_fleet_msgs::msg::RobotState robot_state;
+  // rmf_fleet_msgs::msg::RobotState robot_state;
   // robot_state.name = server_node_config.fleet_name;
   // robot_state.clear();
-  std::memset(&robot_state, 0, sizeof(robot_state)); 
+  // std::memset(&robot_state, 0, sizeof(robot_state)); 
 
   ReadLock robot_states_lock(robot_states_mutex);
   for (const auto it : robot_states)
@@ -404,7 +404,7 @@ void ServerNode::publish_robot_state()
       rmf_frame_rs.path.push_back(rmf_frame_path_loc);
     }
 
-    robot_state_pub->publish(robot_state);
+    robot_state_pub->publish(rmf_frame_rs);
   }
   // robot_state_pub->publish(robot_state);
 }
