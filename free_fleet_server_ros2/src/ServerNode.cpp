@@ -367,7 +367,7 @@ void ServerNode::publish_robot_state()
 {
   rmf_fleet_msgs::msg::RobotState robot_state;
   // robot_state.name = server_node_config.fleet_name;
-  robot_state.robots.clear();
+  robot_state.clear();
 
   ReadLock robot_states_lock(robot_states_mutex);
   for (const auto it : robot_states)
