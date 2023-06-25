@@ -98,7 +98,7 @@ void ServerNode::print_config()
 void ServerNode::setup_config()
 {
   get_parameter("fleet_name", server_node_config.fleet_name);
-  get_parameter("fleet_state_topic", server_node_config.fleet_state_topic);
+  get_parameter("robot_state_topic", server_node_config.robot_state_topic);
   get_parameter("mode_request_topic", server_node_config.mode_request_topic);
   get_parameter("path_request_topic", server_node_config.path_request_topic);
   get_parameter(
@@ -158,24 +158,24 @@ void ServerNode::start(Fields _fields)
   // Second callback group that handles publishing fleet states to RMF, and
   // handling requests from RMF to be sent down to the clients
 
-  fleet_state_pub_callback_group = create_callback_group(
+  robot_state_pub_callback_group = create_callback_group(
       rclcpp::CallbackGroupType::MutuallyExclusive);
 
-  fleet_state_pub =
-      create_publisher<rmf_fleet_msgs::msg::FleetState>(
-          server_node_config.fleet_state_topic, 10);
+  robot_state_pub =
+      create_publisher<rmf_fleet_msgs::msg::RobotState>(
+          server_node_config.robot_state_topic, 10);
 
-  fleet_state_pub_timer = create_wall_timer(
+  robot_state_pub_timer = create_wall_timer(
       std::chrono::seconds(1) / server_node_config.publish_state_frequency,
-      std::bind(&ServerNode::publish_fleet_state, this),
-      fleet_state_pub_callback_group);
+      std::bind(&ServerNode::publish_robot_state, this),
+      robot_state_pub_callback_group);
 
   // --------------------------------------------------------------------------
   // Mode request handling
 
   auto mode_request_sub_opt = rclcpp::SubscriptionOptions();
 
-  mode_request_sub_opt.callback_group = fleet_state_pub_callback_group;
+  mode_request_sub_opt.callback_group = robot_state_pub_callback_group;
 
   mode_request_sub = create_subscription<rmf_fleet_msgs::msg::ModeRequest>(
       server_node_config.mode_request_topic, rclcpp::QoS(10),
@@ -190,7 +190,7 @@ void ServerNode::start(Fields _fields)
 
   auto path_request_sub_opt = rclcpp::SubscriptionOptions();
 
-  path_request_sub_opt.callback_group = fleet_state_pub_callback_group;
+  path_request_sub_opt.callback_group = robot_state_pub_callback_group;
 
   path_request_sub = create_subscription<rmf_fleet_msgs::msg::PathRequest>(
       server_node_config.path_request_topic, rclcpp::QoS(10),
@@ -205,7 +205,7 @@ void ServerNode::start(Fields _fields)
 
   auto destination_request_sub_opt = rclcpp::SubscriptionOptions();
 
-  destination_request_sub_opt.callback_group = fleet_state_pub_callback_group;
+  destination_request_sub_opt.callback_group = robot_state_pub_callback_group;
 
   destination_request_sub =
       create_subscription<rmf_fleet_msgs::msg::DestinationRequest>(
@@ -363,11 +363,11 @@ void ServerNode::update_state_callback()
   }
 }
 
-void ServerNode::publish_fleet_state()
+void ServerNode::publish_robot_state()
 {
-  rmf_fleet_msgs::msg::FleetState fleet_state;
-  fleet_state.name = server_node_config.fleet_name;
-  fleet_state.robots.clear();
+  rmf_fleet_msgs::msg::RobotState robot_state;
+  // robot_state.name = server_node_config.fleet_name;
+  robot_state.robots.clear();
 
   ReadLock robot_states_lock(robot_states_mutex);
   for (const auto it : robot_states)
@@ -403,9 +403,9 @@ void ServerNode::publish_fleet_state()
       rmf_frame_rs.path.push_back(rmf_frame_path_loc);
     }
 
-    fleet_state.robots.push_back(rmf_frame_rs);
+    robot_state.push_back(rmf_frame_rs);
   }
-  fleet_state_pub->publish(fleet_state);
+  robot_state_pub->publish(robot_state);
 }
 
 } // namespace ros2
