@@ -29,7 +29,7 @@
 
 #include <rmf_fleet_msgs/msg/location.hpp>
 #include <rmf_fleet_msgs/msg/robot_state.hpp>
-// #include <rmf_fleet_msgs/msg/robot_state.hpp>
+#include <rmf_fleet_msgs/msg/fleet_state.hpp>
 #include <rmf_fleet_msgs/msg/mode_request.hpp>
 #include <rmf_fleet_msgs/msg/path_request.hpp>
 #include <rmf_fleet_msgs/msg/destination_request.hpp>
@@ -121,14 +121,14 @@ private:
   // --------------------------------------------------------------------------
 
   rclcpp::CallbackGroup::SharedPtr
-      robot_state_pub_callback_group;
+      fleet_state_pub_callback_group;
 
-  rclcpp::TimerBase::SharedPtr robot_state_pub_timer;
+  rclcpp::TimerBase::SharedPtr fleet_state_pub_timer;
 
-  rclcpp::Publisher<rmf_fleet_msgs::msg::RobotState>::SharedPtr
-      robot_state_pub;
+  rclcpp::Publisher<rmf_fleet_msgs::msg::FleetState>::SharedPtr
+      fleet_state_pub;
 
-  void publish_robot_state();
+  void publish_fleet_state();
 
   // --------------------------------------------------------------------------
 

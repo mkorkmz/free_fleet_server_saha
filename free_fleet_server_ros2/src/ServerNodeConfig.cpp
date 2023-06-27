@@ -34,7 +34,7 @@ void ServerNodeConfig::print_config() const
   printf("  update state frequency: %.1f\n", update_state_frequency);
   printf("  publish state frequency: %.1f\n", publish_state_frequency);
   printf("  TOPICS\n");
-  printf("    robot state: %s\n", robot_state_topic.c_str());
+  printf("    fleet state: %s\n", fleet_state_topic.c_str());
   printf("    mode request: %s\n", mode_request_topic.c_str());
   printf("    path request: %s\n", path_request_topic.c_str());
   printf("    destination request: %s\n", destination_request_topic.c_str());
