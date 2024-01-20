@@ -171,6 +171,17 @@ void ServerNode::start(Fields _fields)
       fleet_state_pub_callback_group);
 
   // --------------------------------------------------------------------------
+  // Check disconnecting robots
+  
+  check_connection_callback_group = create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive);
+
+  check_connection_timer = create_wall_timer(
+      std::chrono::seconds(5),
+      std::bind(&ServerNode::check_connection_callback, this),
+      check_connection_callback_group);
+
+  // --------------------------------------------------------------------------
   // Mode request handling
 
   auto mode_request_sub_opt = rclcpp::SubscriptionOptions();
@@ -406,6 +417,35 @@ void ServerNode::publish_fleet_state()
     fleet_state.robots.push_back(rmf_frame_rs);
   }
   fleet_state_pub->publish(fleet_state);
+}
+
+void ServerNode::check_connection_callback()
+{
+
+  for (const auto& it : robot_states)
+  {
+    rclcpp::Time newRobotTime(it.second.location.t.sec, it.second.location.t.nanosec);
+    rclcpp::Time oldRobotTime(last_robot_states[it.second.name].location.t.sec, last_robot_states[it.second.name].location.t.nanosec);
+    if (newRobotTime == oldRobotTime) {
+      if(std::find(connected_robots.begin(), connected_robots.end(), it.second.name) != connected_robots.end()) {
+        RCLCPP_INFO(
+            get_logger(),
+            "Robot disconnected: [%s]",
+            it.second.name.c_str());
+        connected_robots.erase(std::remove(connected_robots.begin(), connected_robots.end(), it.second.name), connected_robots.end());
+      }
+    }
+    else {
+        if (std::find(connected_robots.begin(), connected_robots.end(), it.second.name) == connected_robots.end()) {
+          RCLCPP_INFO(
+              get_logger(),
+              "Robot connected: [%s]",
+              it.second.name.c_str());
+          connected_robots.push_back(it.second.name);
+        }
+    }
+  }
+  last_robot_states = robot_states;
 }
 
 } // namespace ros2

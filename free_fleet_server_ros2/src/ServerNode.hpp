@@ -132,6 +132,18 @@ private:
 
   // --------------------------------------------------------------------------
 
+  rclcpp::CallbackGroup::SharedPtr check_connection_callback_group;
+
+  rclcpp::TimerBase::SharedPtr check_connection_timer;
+
+  std::unordered_map<std::string, rmf_fleet_msgs::msg::RobotState> last_robot_states;
+ 
+  std::vector<std::string> connected_robots;
+
+  void check_connection_callback();
+
+  // --------------------------------------------------------------------------
+
   ServerNodeConfig server_node_config;
 
   void setup_config();
