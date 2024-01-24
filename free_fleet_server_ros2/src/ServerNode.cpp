@@ -177,7 +177,7 @@ void ServerNode::start(Fields _fields)
       rclcpp::CallbackGroupType::MutuallyExclusive);
 
   check_connection_timer = create_wall_timer(
-      std::chrono::seconds(5),
+      std::chrono::seconds(3),
       std::bind(&ServerNode::check_connection_callback, this),
       check_connection_callback_group);
 
@@ -402,7 +402,10 @@ void ServerNode::publish_fleet_state()
     rmf_frame_rs.model = fleet_frame_rs.model;
     rmf_frame_rs.task_id = fleet_frame_rs.task_id;
     rmf_frame_rs.mode = fleet_frame_rs.mode;
-    rmf_frame_rs.battery_percent = fleet_frame_rs.battery_percent;
+    if(std::find(connected_robots.begin(), connected_robots.end(), fleet_frame_rs.name) != connected_robots.end())
+      rmf_frame_rs.battery_percent = fleet_frame_rs.battery_percent;
+    else
+      rmf_frame_rs.battery_percent = 0;
 
     rmf_frame_rs.path.clear();
     for (const auto& fleet_frame_path_loc : fleet_frame_rs.path)
