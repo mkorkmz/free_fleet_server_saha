@@ -406,6 +406,10 @@ void ServerNode::publish_fleet_state()
       rmf_frame_rs.battery_percent = fleet_frame_rs.battery_percent;
     else
       rmf_frame_rs.battery_percent = 0;
+      rmf_frame_rs.location.x=0;
+      rmf_frame_rs.location.y=0;
+      rmf_frame_rs.location.yaw=0;
+
 
     rmf_frame_rs.path.clear();
     for (const auto& fleet_frame_path_loc : fleet_frame_rs.path)
