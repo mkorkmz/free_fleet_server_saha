@@ -404,11 +404,12 @@ void ServerNode::publish_fleet_state()
     rmf_frame_rs.mode = fleet_frame_rs.mode;
     if(std::find(connected_robots.begin(), connected_robots.end(), fleet_frame_rs.name) != connected_robots.end())
       rmf_frame_rs.battery_percent = fleet_frame_rs.battery_percent;
-    else
-      rmf_frame_rs.battery_percent = 0;
-      rmf_frame_rs.location.x=0;
-      rmf_frame_rs.location.y=0;
-      rmf_frame_rs.location.yaw=0;
+    else{
+          rmf_frame_rs.battery_percent = 0;
+          rmf_frame_rs.location.x=0;
+          rmf_frame_rs.location.y=0;
+          rmf_frame_rs.location.yaw=0;
+        }
 
 
     rmf_frame_rs.path.clear();
