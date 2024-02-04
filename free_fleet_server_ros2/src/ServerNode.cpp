@@ -401,15 +401,19 @@ void ServerNode::publish_fleet_state()
     rmf_frame_rs.name = fleet_frame_rs.name;
     rmf_frame_rs.model = fleet_frame_rs.model;
     rmf_frame_rs.task_id = fleet_frame_rs.task_id;
-    rmf_frame_rs.mode = fleet_frame_rs.mode;
-    if(std::find(connected_robots.begin(), connected_robots.end(), fleet_frame_rs.name) != connected_robots.end())
+    if(std::find(connected_robots.begin(), connected_robots.end(), fleet_frame_rs.name) != connected_robots.end()) 
+    {
       rmf_frame_rs.battery_percent = fleet_frame_rs.battery_percent;
-    else{
-          rmf_frame_rs.battery_percent = 0;
-          rmf_frame_rs.location.x=0;
-          rmf_frame_rs.location.y=0;
-          rmf_frame_rs.location.yaw=0;
-        }
+      rmf_frame_rs.mode = fleet_frame_rs.mode;
+    }
+    else
+    {
+      rmf_frame_rs.battery_percent = 0;
+      rmf_frame_rs.location.x=0;
+      rmf_frame_rs.location.y=0;
+      rmf_frame_rs.location.yaw=0;
+      rmf_frame_rs.mode.mode = rmf_fleet_msgs::msg::RobotMode::MODE_ADAPTER_ERROR;
+    }
 
 
     rmf_frame_rs.path.clear();
